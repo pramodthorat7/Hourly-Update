@@ -7,6 +7,7 @@
     <title>Production Dashboard</title>
     <style>
         :root {
+            /* Light mode variables */
             --bg: #f8fafc;
             --card: #ffffff;
             --muted: #64748b;
@@ -21,6 +22,32 @@
             --glass: rgba(255, 255, 255, 0.8);
             --model-bg: #f0f9ff;
             --model-color: #0369a1;
+            --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --text: #0f172a;
+            --text-light: #64748b;
+            --card-bg: #ffffff;
+        }
+
+        .dark-mode {
+            /* Dark mode variables */
+            --bg: #0f172a;
+            --card: #1e293b;
+            --muted: #94a3b8;
+            --accent: #f1f5f9;
+            --primary: #22d3ee;
+            --btn: #0ea5a4;
+            --danger: #f87171;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --glass: rgba(30, 41, 59, 0.8);
+            --model-bg: #1e3a8a;
+            --model-color: #dbeafe;
+            --header-bg: linear-gradient(135deg, #4338ca 0%, #1e40af 100%);
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
+            --card-bg: #1e293b;
         }
 
         * {
@@ -33,28 +60,57 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: var(--bg);
-            color: var(--accent);
+            color: var(--text);
             -webkit-font-smoothing: antialiased;
             line-height: 1.3;
             font-size: 13px;
             padding: 0;
             overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 100%;
             margin: 0 auto;
+            padding: 60px 6px 8px;
+            /* Added top padding for fixed buttons */
+        }
+
+        /* Fixed Action Buttons */
+        .fixed-action-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--card-bg);
             padding: 8px 6px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .action-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
         }
 
         /* Compact Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--header-bg);
             padding: 10px 8px;
             border-radius: 10px;
             margin-bottom: 8px;
             color: white;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
         h1 {
@@ -69,8 +125,27 @@
         .lead {
             font-size: 10px;
             opacity: 0.9;
-            margin-bottom: 6px;
+            margin-bottom: 0;
             line-height: 1.1;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 20px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         /* Shift Controls */
@@ -83,6 +158,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .shift-input {
@@ -92,7 +168,7 @@
 
         .shift-input label {
             font-size: 9px;
-            color: var(--accent);
+            color: white;
             margin-bottom: 3px;
             font-weight: 500;
         }
@@ -108,12 +184,18 @@
             color: var(--accent);
         }
 
-        /* Single Row Action Buttons */
-        .action-row {
+        .dark-mode select,
+        .dark-mode input[type="date"] {
+            background: rgba(30, 41, 59, 0.9);
+            color: var(--text);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .shift-actions {
+            grid-column: span 2;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-bottom: 8px;
+            grid-template-columns: 1fr;
+            gap: 4px;
         }
 
         /* Stats */
@@ -125,11 +207,12 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--card-bg);
             padding: 8px;
             border-radius: 6px;
             box-shadow: 0 2px 6px var(--shadow);
             text-align: center;
+            border: 1px solid var(--border);
         }
 
         .stat-card h3 {
@@ -141,6 +224,7 @@
         .stat-card .value {
             font-size: 14px;
             font-weight: 700;
+            color: var(--primary);
         }
 
         /* Lines Container */
@@ -153,12 +237,16 @@
 
         /* Compact Card Design */
         .line-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px var(--shadow);
             border: 1px solid var(--border);
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .line-card:hover {
+            box-shadow: 0 4px 12px var(--shadow);
         }
 
         .line-card:active {
@@ -171,13 +259,13 @@
             align-items: center;
             margin-bottom: 6px;
             padding-bottom: 4px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border);
         }
 
         .card-title {
             font-weight: 600;
             font-size: 12px;
-            color: var(--accent);
+            color: var(--text);
         }
 
         .position-badge {
@@ -200,29 +288,29 @@
         .hour-input {
             flex: 1;
             padding: 8px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             border-radius: 6px;
             font-size: 12px;
-            background: white;
-            color: var(--accent);
+            background: var(--card-bg);
+            color: var(--text);
             font-weight: 500;
             text-align: center;
         }
 
         .hour-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(14, 165, 164, 0.1);
+            box-shadow: 0 0 0 2px rgba(14, 165, 164, 0.2);
             outline: none;
         }
 
         .model-select {
             flex: 1;
             padding: 8px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid var(--border);
             border-radius: 6px;
             font-size: 11px;
-            background: white;
-            color: var(--accent);
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         /* Commutative Display - Enhanced */
@@ -239,8 +327,9 @@
         .comm-main {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 4px;
+            flex-wrap: wrap;
         }
 
         .comm-total {
@@ -252,23 +341,36 @@
 
         .comm-breakdown {
             font-size: 10px;
-            color: var(--accent);
+            color: var(--text);
             flex: 1;
-            background: #f0fdfa;
-            padding: 4px 6px;
+            background: linear-gradient(135deg, rgba(14, 165, 164, 0.1), rgba(59, 130, 246, 0.1));
+            padding: 4px 8px;
             border-radius: 4px;
             border-left: 2px solid var(--primary);
         }
 
+        .dark-mode .comm-breakdown {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.1));
+        }
+
         .comm-components {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--muted);
-            padding-left: 10px;
-            margin-top: 2px;
+            background: var(--border);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .comm-components-set {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
         }
 
         .set-btn {
-            padding: 5px 8px;
+            padding: 5px 10px;
             background: var(--primary);
             color: white;
             border: none;
@@ -276,6 +378,7 @@
             font-size: 10px;
             font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
         }
 
         /* Model Totals Display */
@@ -289,18 +392,18 @@
         .model-total-item {
             background: var(--model-bg);
             color: var(--model-color);
-            padding: 3px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-size: 9px;
             font-weight: 600;
-            border: 1px solid #bae6fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         /* WIP Section */
         .wip-section {
             margin-top: 6px;
             padding-top: 6px;
-            border-top: 1px dashed #e2e8f0;
+            border-top: 1px dashed var(--border);
         }
 
         .wip-title {
@@ -320,7 +423,7 @@
         .model-label {
             flex: 1;
             font-size: 10px;
-            color: var(--accent);
+            color: var(--text);
             min-width: 70px;
         }
 
@@ -331,10 +434,12 @@
             border-radius: 4px;
             font-size: 11px;
             text-align: center;
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         .wip-total {
-            background: #f1f5f9;
+            background: var(--border);
             padding: 5px 6px;
             border-radius: 5px;
             margin-top: 5px;
@@ -358,6 +463,8 @@
             border: 1px solid var(--border);
             border-radius: 5px;
             font-size: 11px;
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         /* Card Actions */
@@ -366,7 +473,7 @@
             gap: 5px;
             margin-top: 8px;
             padding-top: 8px;
-            border-top: 1px solid #f1f5f9;
+            border-top: 1px solid var(--border);
         }
 
         .card-actions button {
@@ -379,11 +486,12 @@
 
         /* Message Section */
         .message-section {
-            background: white;
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px var(--shadow);
             margin-bottom: 8px;
+            border: 1px solid var(--border);
         }
 
         .message-header {
@@ -396,7 +504,7 @@
         .message-title {
             font-weight: 600;
             font-size: 12px;
-            color: var(--accent);
+            color: var(--text);
         }
 
         .message-actions {
@@ -407,7 +515,7 @@
         }
 
         .message-preview {
-            background: #1e293b;
+            background: var(--accent);
             color: white;
             padding: 10px;
             border-radius: 6px;
@@ -439,9 +547,9 @@
         }
 
         .btn-secondary {
-            background: white;
-            color: var(--accent);
-            border: 2px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
         .btn-danger {
@@ -462,7 +570,7 @@
             color: var(--muted);
             text-align: center;
             padding: 6px;
-            border-top: 1px solid #f1f5f9;
+            border-top: 1px solid var(--border);
             margin-top: 6px;
         }
 
@@ -494,7 +602,7 @@
         /* Time Indicator */
         .time-indicator {
             font-size: 9px;
-            padding: 3px 6px;
+            padding: 3px 8px;
             border-radius: 10px;
             font-weight: 600;
             background: var(--primary);
@@ -517,18 +625,19 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--card-bg);
             padding: 16px;
             border-radius: 10px;
             width: 90%;
             max-width: 280px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border);
         }
 
         .modal-content h3 {
             margin: 0 0 10px 0;
             font-size: 14px;
-            color: var(--accent);
+            color: var(--text);
         }
 
         .modal-actions {
@@ -539,27 +648,32 @@
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: var(--border);
+            border-radius: 2px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 1px;
+            border-radius: 2px;
         }
 
         /* Responsive */
         @media (min-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 60px 10px 10px;
                 max-width: 800px;
             }
 
             .shift-controls {
                 grid-template-columns: repeat(4, 1fr);
+            }
+
+            .shift-actions {
+                grid-column: span 1;
             }
 
             .action-row {
@@ -582,11 +696,29 @@
 </head>
 
 <body>
+    <!-- Fixed Action Buttons -->
+    <div class="fixed-action-buttons">
+        <div class="action-row">
+            <button id="applyAllBtn" class="btn-success">Apply All</button>
+            <button id="generateBtn" class="btn-primary">Generate</button>
+            <button id="copyBtn" class="btn-secondary">Copy</button>
+            <button id="resetAllBtn" class="btn-secondary">Reset All</button>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📊 Production Dashboard</h1>
-            <p class="lead">Mobile-friendly hourly production tracking with model-based calculations</p>
+            <div class="header-top">
+                <div>
+                    <h1>📊 Production Dashboard</h1>
+                    <p class="lead">Mobile-friendly hourly production tracking with model-based calculations</p>
+                </div>
+                <button id="themeToggle" class="theme-toggle">
+                    <span id="themeIcon">🌙</span>
+                    <span id="themeText">Dark</span>
+                </button>
+            </div>
 
             <!-- Shift Controls -->
             <div class="shift-controls">
@@ -606,20 +738,12 @@
                     <label>Hour</label>
                     <select id="currentHour"></select>
                 </div>
-                <div class="shift-input" style="display: flex; align-items: flex-end;">
-                    <button id="resetShiftBtn" class="btn-danger" style="width: 100%; padding: 7px; font-size: 11px;">
+                <div class="shift-actions">
+                    <button id="resetShiftBtn" class="btn-danger" style="padding: 7px; font-size: 11px;">
                         Reset Shift
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Single Row Action Buttons -->
-        <div class="action-row">
-            <button id="applyAllBtn" class="btn-success">Apply All</button>
-            <button id="generateBtn" class="btn-primary">Generate</button>
-            <button id="copyBtn" class="btn-secondary">Copy</button>
-            <button id="resetAllBtn" class="btn-secondary">Reset All</button>
         </div>
 
         <!-- Stats -->
@@ -657,7 +781,7 @@
         </div>
 
         <div class="footer">
-            Production Dashboard v2.1 | Apply adds to WIP, subtracts from upstream
+            Production Dashboard v2.2 | Dark Mode | Apply adds to WIP, subtracts from upstream
         </div>
     </div>
 
@@ -728,12 +852,57 @@
         let currentHour = '';
         let editingLine = '';
         let selectedModels = {};
+        let isDarkMode = false;
 
         // Store commutative history for breakdown
         const commutativeHistory = {};
 
+        // ==================== THEME MANAGEMENT ====================
+        function initTheme() {
+            // Check for saved theme preference or prefer-color-scheme
+            const savedTheme = localStorage.getItem('prodDashboardTheme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            isDarkMode = savedTheme === 'dark' || (!savedTheme && prefersDark);
+
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                updateThemeToggle();
+            }
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+
+            localStorage.setItem('prodDashboardTheme', isDarkMode ? 'dark' : 'light');
+            updateThemeToggle();
+            showToast(isDarkMode ? 'Dark mode enabled' : 'Light mode enabled');
+        }
+
+        function updateThemeToggle() {
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            if (isDarkMode) {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            }
+        }
+
         // ==================== INITIALIZATION ====================
         function initApp() {
+            // Initialize theme
+            initTheme();
+
             // Set default date to today
             const today = new Date();
             shiftDate = today.toISOString().split('T')[0];
@@ -1022,19 +1191,26 @@
                     componentsStr = line.commutativeComponents.join('+');
                 }
 
-                // Create model breakdown
+                // Create model breakdown with totals
                 let breakdownStr = '';
+                let modelTotalStr = '';
                 if (hasModels) {
                     const breakdownParts = [];
+                    let totalModels = 0;
+
                     models.forEach(model => {
                         const value = line.commutativeBreakdown[model.key] || 0;
+                        totalModels += value;
                         if (value > 0) {
                             breakdownParts.push(`${model.label}: ${value}`);
                         }
                     });
 
                     if (breakdownParts.length > 0) {
-                        breakdownStr = `(${breakdownParts.join(' | ')})`;
+                        modelTotalStr = `${totalModels} | `;
+                        breakdownStr = `(${modelTotalStr}${breakdownParts.join(' | ')})`;
+                    } else if (totalModels > 0) {
+                        breakdownStr = `(${totalModels})`;
                     }
                 }
 
@@ -1043,34 +1219,14 @@
       <div class="comm-main">
         <span class="comm-total">${line.commutativeTotal.toString().padStart(2, '0')}</span>
         ${breakdownStr ? `<span class="comm-breakdown">${breakdownStr}</span>` : ''}
-        <button class="set-btn" data-line="${lineName}">Set</button>
+        <div class="comm-components-set">
+          ${componentsStr ? `<span class="comm-components">Components: ${componentsStr}</span>` : ''}
+          <button class="set-btn" data-line="${lineName}">Set</button>
+        </div>
       </div>
-      ${componentsStr ? `<div class="comm-components">Components: ${componentsStr}</div>` : ''}
     `;
 
-                // Model totals display
-                if (hasModels) {
-                    const modelTotals = document.createElement('div');
-                    modelTotals.className = 'model-totals';
-
-                    let totalAdded = 0;
-                    models.forEach(model => {
-                        const value = line.commutativeBreakdown[model.key] || 0;
-                        if (value > 0) {
-                            modelTotals.innerHTML += `<span class="model-total-item">${model.label}: ${value}</span>`;
-                            totalAdded += value;
-                        }
-                    });
-
-                    if (totalAdded > 0) {
-                        card.appendChild(commDisplay);
-                        card.appendChild(modelTotals);
-                    } else {
-                        card.appendChild(commDisplay);
-                    }
-                } else {
-                    card.appendChild(commDisplay);
-                }
+                card.appendChild(commDisplay);
 
                 // WIP Section
                 const wipSection = document.createElement('div');
@@ -1394,18 +1550,21 @@
                 message += `${lineName} - ${hourCount.toString().padStart(2, '0')} Nos\n`;
                 message += `Commutative - ${commutative.toString().padStart(2, '0')} Nos`;
 
-                // Commutative breakdown (only show models with > 0)
+                // Commutative breakdown with model totals
                 if (models.length > 0) {
                     const breakdownParts = [];
+                    let totalModels = 0;
+
                     models.forEach(model => {
                         const value = line.commutativeBreakdown[model.key] || 0;
+                        totalModels += value;
                         if (value > 0) {
                             breakdownParts.push(`${model.label}: ${value}`);
                         }
                     });
 
                     if (breakdownParts.length > 0) {
-                        message += ` (${breakdownParts.join(' | ')})`;
+                        message += ` (${totalModels} | ${breakdownParts.join(' | ')})`;
                     }
                 }
 
@@ -1509,6 +1668,9 @@
         // ==================== EVENT LISTENERS ====================
         document.addEventListener('DOMContentLoaded', () => {
             initApp();
+
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
             document.getElementById('shiftDate').addEventListener('change', (e) => {
                 shiftDate = e.target.value;
